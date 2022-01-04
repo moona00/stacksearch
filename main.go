@@ -4,8 +4,6 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/shadowboi19/stacksearch"
-
 	"github.com/gocolly/colly"
 )
 
@@ -16,9 +14,9 @@ func main() {
 	case 1:
 		msg = "Please insert something to search"
 	case 2:
-		sort = stacksearch.SortOptions["-r"]
+		sort = SortOptions["-r"]
 	case 3:
-		s, ok := stacksearch.SortOptions[os.Args[2]]
+		s, ok := SortOptions[os.Args[2]]
 		sort = s
 		if !ok {
 			msg = "Invalid sort option"

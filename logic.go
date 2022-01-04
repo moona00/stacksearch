@@ -1,4 +1,4 @@
-package stacksearch
+package main
 
 // SortOptions the sort options
 var SortOptions = map[string]string{
