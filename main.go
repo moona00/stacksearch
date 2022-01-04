@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"os"
 
-	"./stacksearch"
+	"github.com/shadowboi19/stacksearch"
 
 	"github.com/gocolly/colly"
 )
