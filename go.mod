@@ -1,4 +1,4 @@
-module github.com/shadowboi19/stacksearch
+module main
 
 go 1.17
 
