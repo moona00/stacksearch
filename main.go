@@ -12,6 +12,7 @@ import (
 const (
 	inputError   = "Input error"
 	browserError = "Browser error"
+	baseURL      = "https://www.stackoverflow.com"
 )
 
 var sortOptions = map[string]string{
@@ -24,17 +25,17 @@ var sortOptions = map[string]string{
 }
 
 func scanInput() string {
-	var i string
-	_, err := fmt.Scan(&i)
+	var input string
+	_, err := fmt.Scan(&input)
 	if err != nil {
 		panic(inputError)
 	}
 
-	return i
+	return input
 }
 
 func main() {
-	var msg, sort string
+	var sort string
 	var page int
 
 	col := colly.NewCollector(
@@ -62,33 +63,29 @@ func main() {
 
 		i = 0
 		links = make([]string, 15)
-		exec.Command("clear").Start()
 
-		url := fmt.Sprintf("https://www.stackoverflow.com/questions/tagged/%s?tab=%s&page=%d&pagesize=15", os.Args[1], sort, page)
-		fmt.Println(url)
+		url := fmt.Sprintf(
+			"%s/questions/tagged/%s?tab=%s&page=%d&pagesize=15",
+			baseURL,
+			os.Args[1],
+			sort,
+			page,
+		)
 		err := col.Visit(url)
 		if err != nil {
-			fmt.Println("error")
+			fmt.Println(err.Error())
 		}
 	}
 
-	var visitURL = func() {
-		inputLink, err := strconv.Atoi(scanInput())
-		for err == nil {
-			fmt.Println("Valid inputs: ',', '.', 'e', '{0-14}'")
-			inputLink, err = strconv.Atoi(scanInput())
-		}
-
-		err = os.Chdir("/")
-		if err != nil {
-			panic(browserError)
-		}
+	var visitInputURL = func(input string) {
+		link, _ := strconv.Atoi(input)
 
 		cmd := []string{
 			"open",
-			fmt.Sprintf("https://www.stackoverflow.com%s", links[inputLink]),
+			fmt.Sprintf("%s%s", baseURL, links[link]),
 		}
-		err = exec.Command(cmd[0], cmd[1]).Start()
+
+		err := exec.Command(cmd[0], cmd[1]).Start()
 		if err != nil {
 			panic(err)
 		}
@@ -96,22 +93,17 @@ func main() {
 
 	switch len(os.Args) {
 	case 1:
-		msg = "Insert something to search"
+		panic("Insert something to search")
 	case 2:
 		sort = sortOptions["-a"]
 	case 3:
 		s, ok := sortOptions[os.Args[2]]
 		sort = s
 		if !ok {
-			msg = "Invalid sort option"
+			panic("Invalid sort option")
 		}
 	default:
-		msg = "Too many arguments"
-	}
-
-	if msg != "" {
-		fmt.Println(msg)
-		os.Exit(1)
+		panic("Too many arguments")
 	}
 
 	newPage(true)
@@ -123,7 +115,7 @@ func main() {
 		case ".":
 			newPage(true)
 		default:
-			visitURL()
+			visitInputURL(s)
 		}
 	}
 }
